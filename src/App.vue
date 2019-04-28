@@ -1,14 +1,19 @@
 <template>
   <div id="app">
-    <router-view/>
+    <CO2 :key="$route.fullPath" />
   </div>
 </template>
 
 <script>
+import CO2 from './components/CO2.vue';
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    CO2,
+  },
 }
 </script>
+
 
 /* <style>
 #app {
