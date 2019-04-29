@@ -2,11 +2,21 @@
   <div>
     <h1>CO2 Emissions</h1>
     <p>Which country's emissions would you like to see?</p>
+    <p>Country is: {{ countryinput }}</p>
     <p>Country is: {{ this.countryinput }}</p>
+    <p>Country is: {{ msg.countryinput_api }}</p>
     <p>{{ loading }}</p>
     <p>
       vituttaa
     </p>
+
+    <select v-model="selected">
+    <option disabled value="">Please select one</option>
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+    </select>
+    <span>Selected: {{ selected }}</span>
     <p>{{msg.countryinput}}</p>
     <!-- <input type="text" id="myInput" onkeyup="myFunction()"
     placeholder="Search for a country.." title="Type in a name">
@@ -65,13 +75,14 @@ export default {
   name: 'CO2',
   data () {
     return {
-      //ountryinput: 'Finland',
+      //countryinput: 'Finland',
       countries: '',
       msg: '',
       emissions: '',
       headers: '',
       years: '',
       loading: '',
+      selected: '',
     }
   },
   // async mounted () {

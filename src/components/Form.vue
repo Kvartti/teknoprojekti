@@ -1,53 +1,67 @@
 <template>
   <div>
-<h2>{{ msg.headers[0] }}</h2>
-  <table class="tablestyle" align="center">
-  <tr>
-    <th>Year</th>
-    <th>{{ msg.headers[2] }}</th>
-  </tr>
-  <tr v-for="(emission, index) in msg.emissions">
-  <td>{{ msg.years[index] }}</td>
-    <td>{{ emission }}</td>
-  </tr>
-</table>
-  </div>
+    <h1>CO2 Emissions</h1>
+    <p>Which country's emissions would you like to see?</p>
+    <p>
+      vituttaa
+    </p>
+    <p>Countryinput: {{ this.countryinput }}</p>
+    <select v-model="selected">
+    <!-- <option disabled value="">Please select one</option> -->
+    <option v-for="country in countries.countries">{{ country }}</option>
+    </select><br/>
+    <span>Selected: {{ selected }}</span>
+    <p>{{msg.countryinput}}</p>
+    <!-- <button v-on:click="selectInput">Search</button> -->
+
+    <div v-if="selected != ''">
+  <h2>{{ this.selected }}</h2>
+    <table class="tablestyle" align="center">
+    <tr>
+      <th>Year</th>
+      <th>{{ msg.headers[2] }}</th>
+    </tr>
+    <tr v-for="(emission, index) in msg.emissions">
+    <td>{{ msg.years[index] }}</td>
+      <td>{{ emission }}</td>
+    </tr>
+  </table>
+    </div>
+    <h1>{{this.selected}}</h1>
   </div>
 </template>
-
 
 <script>
 import { mapState } from 'vuex'
 import axios from 'axios';
 
 export default {
-  name: 'CO2',
+  name: 'Form',
   data () {
     return {
-      countryinput: 'Finland',
+      //countryinput: '',
       countries: '',
       msg: '',
-      emissions: '',
-      headers: '',
-      years: '',
-      loading: '',
+      selected: '',
     }
   },
-  // async mounted () {
-  //   await this.$store.dispatch('loadText')
-  // },
   computed: mapState([
     'msg',
     'countries',
-    'countryinput',
-    'visible',
+    //'countryinput',
+    'selected',
   ]),
   watch: {
-
+    selected: function (selected) {
+      this.getMessage()
+    }
   },
   methods: {
-    getMessage() {
-      const path = 'http://localhost:5000/api/countries/' + this.countryinput;
+    selectInput(selected) {
+      this.countryinput = selected
+    },
+    getMessage(selected) {
+      const path = 'http://localhost:5000/api/countries/' + this.selected;
       axios.get(path)
         .then((res) => {
           this.msg = res.data;
@@ -56,6 +70,28 @@ export default {
           // eslint-disable-next-line
           console.error(error);
         });
+    },
+    changeInput(payload) {
+      const path = 'http://localhost:5000/api/countries';
+      axios.post(path, payload)
+        .then(() => {
+          this.getMessage();
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.getMessage();
+        });
+    },
+    onSubmit(evt) {
+      evt.preventDefault();
+      let read = false;
+      if (this.addBookForm.read[0]) read = true;
+      const payload = {
+        countryinput: this.countryinput,
+      };
+      this.changeInput(payload);
+      this.initForm();
     },
     getCountries() {
       const path = 'http://localhost:5000/api/countries';
@@ -72,6 +108,7 @@ export default {
   created() {
     this.getMessage();
     this.getCountries();
+    this.selectInput();
   },
 };
 </script>
