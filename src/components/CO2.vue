@@ -2,17 +2,19 @@
   <div>
     <h1>CO2 Emissions</h1>
     <p>Which country's emissions would you like to see?</p>
-    <p>Country is: {{ countryinput }}</p>
+    <p>Country is: {{ this.countryinput }}</p>
     <p>{{ loading }}</p>
     <p>
       vituttaa
     </p>
+    <p>{{msg.countryinput}}</p>
     <!-- <input type="text" id="myInput" onkeyup="myFunction()"
     placeholder="Search for a country.." title="Type in a name">
     <input id="country" type="text" name="countryname" placeholder="Search for a country..">
     <input type="submit" value="Submit" @click="submitEntry"> -->
   <form>
-      <input v-model="countryinput" placeholder="Search for a country.."/>
+      <input v-model="msg.countryinput" placeholder="Search for a country.."/>
+      <button v-on:click="updateInput" type="submit">Search</button>
       <!-- <button v-on:click="search" type="submit">Search</button> -->
   </form>
   <!-- <div>
@@ -63,7 +65,7 @@ export default {
   name: 'CO2',
   data () {
     return {
-      countryinput: 'Finland',
+      //ountryinput: 'Finland',
       countries: '',
       msg: '',
       emissions: '',
@@ -90,15 +92,23 @@ export default {
       //     },
       //     immediate: true,
       // },
-      countryinput: function (newQuestion, oldQuestion) {
-      this.loading = 'Waiting for you to stop typing...'
-      this.debouncedGetAnswer()
+    //   countryinput: function (newQuestion, oldQuestion) {
+    //   this.loading = 'Waiting for you to stop typing...'
+    //   this.debouncedGetAnswer()
+    // },
+    countryinput: function(newInput, oldInput){
+        countryinput = newInput;
     }
   },
   methods: {
     // loadCountries(){
     //     this.$store.dispatch('loadCountries', { countries: this.form.countries})
     //   },
+    // ________updateInput() {
+    // let newcountryinput = 'Sweden';
+    // newcountryinput = this.$store.state.countryinput;
+    // return newcountryinput;
+    // },
     getMessage() {
       const path = 'http://localhost:5000/api/countries/' + this.countryinput;
       axios.get(path)
@@ -109,6 +119,28 @@ export default {
           // eslint-disable-next-line
           console.error(error);
         });
+    },
+    changeInput(payload) {
+      const path = 'http://localhost:5000/api/countries';
+      axios.post(path, payload)
+        .then(() => {
+          this.getMessage();
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.getMessage();
+        });
+    },
+    onSubmit(evt) {
+      evt.preventDefault();
+      let read = false;
+      if (this.addBookForm.read[0]) read = true;
+      const payload = {
+        countryinput: this.countryinput,
+      };
+      this.changeInput(payload);
+      this.initForm();
     },
     getCountries() {
       const path = 'http://localhost:5000/api/countries';

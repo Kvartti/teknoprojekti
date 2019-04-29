@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    countryinput: 'Finland'
+    countryinput: 'Canada'
   },
   actions: {
 

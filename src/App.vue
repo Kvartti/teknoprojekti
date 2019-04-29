@@ -1,15 +1,18 @@
 <template>
   <div id="app">
     <CO2 :key="$route.fullPath" />
+    <!-- <Form /> -->
   </div>
 </template>
 
 <script>
 import CO2 from './components/CO2.vue';
+//import Form from './components/Form.vue';
 export default {
   name: 'App',
   components: {
     CO2,
+    //Form,
   },
 }
 </script>
