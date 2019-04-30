@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import CO2 from '@/components/CO2';
+import Form from '@/components/Form';
 import Ping from '@/components/Ping';
 import Books from '@/components/Books';
 
@@ -11,18 +12,18 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'CO2',
-      component: CO2,
+      name: 'Form',
+      component: Form,
     },
-    {
-      path: '/ping',
-      name: 'Ping',
-      component: Ping,
-    },
-    {
-      path: '/books',
-      name: 'Books',
-      component: Books,
-    },
+    // {
+    //   path: '/ping',
+    //   name: 'Ping',
+    //   component: Ping,
+    // },
+    // {
+    //   path: '/books',
+    //   name: 'Books',
+    //   component: Books,
+    // },
   ],
 });

@@ -5,29 +5,44 @@
     <p>
       vituttaa
     </p>
-    <p>Countryinput: {{ this.countryinput }}</p>
     <select v-model="selected">
-    <!-- <option disabled value="">Please select one</option> -->
     <option v-for="country in countries.countries">{{ country }}</option>
-    </select><br/>
-    <span>Selected: {{ selected }}</span>
-    <p>{{msg.countryinput}}</p>
-    <!-- <button v-on:click="selectInput">Search</button> -->
+    </select>
+    <br/>
+    <input type="checkbox" id="checkbox" v-model="checked">
+    <label for="checkbox">Emissions per capita</label>
+    <!-- <span>Selected: {{ selected }}</span>
+    <p>{{msg.countryinput}}</p> -->
 
-    <div v-if="selected != ''">
-  <h2>{{ this.selected }}</h2>
-    <table class="tablestyle" align="center">
-    <tr>
-      <th>Year</th>
-      <th>{{ msg.headers[2] }}</th>
-    </tr>
-    <tr v-for="(emission, index) in msg.emissions">
-    <td>{{ msg.years[index] }}</td>
-      <td>{{ emission }}</td>
-    </tr>
-  </table>
+<!-- TABLE FOR EMISSIONS-->
+    <div v-if="selected != '' && checked == false">
+      <h2>{{ this.selected }}</h2>
+        <table class="tablestyle" align="center">
+        <tr>
+          <th>Year</th>
+          <th>{{ msg.headers[2] }}</th>
+        </tr>
+        <tr v-for="(emission, index) in msg.emissions">
+        <td>{{ msg.years[index] }}</td>
+          <td>{{ emission }}</td>
+        </tr>
+      </table>
     </div>
-    <h1>{{this.selected}}</h1>
+
+<!-- TABLE FOR EMISSIONS PER CAPITA-->
+    <div v-if="selected != '' && checked == true">
+      <h2>{{ this.selected }}</h2>
+        <table class="tablestyle" align="center">
+        <tr>
+          <th>Year</th>
+          <th>{{ msg.headers[2] }}</th>
+        </tr>
+        <tr v-for="(percapita, index) in msg.percapitas">
+        <td>{{ msg.years[index] }}</td>
+          <td>{{percapita}}</td>
+        </tr>
+        </table>
+    </div>
   </div>
 </template>
 
@@ -39,17 +54,17 @@ export default {
   name: 'Form',
   data () {
     return {
-      //countryinput: '',
       countries: '',
       msg: '',
       selected: '',
+      checked: '',
     }
   },
   computed: mapState([
     'msg',
     'countries',
-    //'countryinput',
     'selected',
+    'checked',
   ]),
   watch: {
     selected: function (selected) {
@@ -67,7 +82,6 @@ export default {
           this.msg = res.data;
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.error(error);
         });
     },
@@ -78,20 +92,9 @@ export default {
           this.getMessage();
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.log(error);
           this.getMessage();
         });
-    },
-    onSubmit(evt) {
-      evt.preventDefault();
-      let read = false;
-      if (this.addBookForm.read[0]) read = true;
-      const payload = {
-        countryinput: this.countryinput,
-      };
-      this.changeInput(payload);
-      this.initForm();
     },
     getCountries() {
       const path = 'http://localhost:5000/api/countries';
@@ -124,5 +127,4 @@ th, td {
   border-bottom: 1px solid #ddd;
   text-align: center;
 }
-
 </style>

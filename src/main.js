@@ -8,6 +8,7 @@ import router from './router'
 import Vuex from 'vuex'
 import { store } from './store/index'
 import CO2 from './components/CO2.vue'
+import Form from './components/Form.vue'
 
 Vue.config.productionTip = false
 
