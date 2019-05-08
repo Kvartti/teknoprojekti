@@ -9,13 +9,15 @@
     <option v-for="country in countries.countries">{{ country }}</option>
     </select>
     <br/>
-    <input type="checkbox" id="checkbox" v-model="checked">
-    <label for="checkbox">Emissions per capita</label>
+    <div><input type="checkbox" id="checkbox" v-model="checked">
+    <label for="checkbox">Emissions per capita</label></div>
+    <div><input type="checkbox" id="charted" v-model="charted">
+    <label for="checkbox">Show as a chart</label></div>
     <!-- <span>Selected: {{ selected }}</span>
     <p>{{msg.countryinput}}</p> -->
 
 <!-- TABLE FOR EMISSIONS-->
-    <div v-if="selected != '' && checked == false">
+    <div v-if="selected != '' && checked == false && charted == false">
       <h2>{{ this.selected }}</h2>
         <table class="tablestyle" align="center">
         <tr>
@@ -23,14 +25,15 @@
           <th>{{ msg.headers[2] }}</th>
         </tr>
         <tr v-for="(emission, index) in msg.emissions">
-        <td>{{ msg.years[index] }}</td>
-          <td>{{ emission }}</td>
+          <td>{{ msg.years[index] }}</td>
+          <td v-if="emission != ''">{{ emission }}</td>
+          <td v-if="emission == ''">-</td>
         </tr>
       </table>
     </div>
 
 <!-- TABLE FOR EMISSIONS PER CAPITA-->
-    <div v-if="selected != '' && checked == true">
+    <div v-if="selected != '' && checked == true && charted == false">
       <h2>{{ this.selected }}</h2>
         <table class="tablestyle" align="center">
         <tr>
@@ -43,7 +46,29 @@
         </tr>
         </table>
     </div>
-  </div>
+
+<!-- SHOW AS A CHART FOR EMISSIONS-->
+    <div v-if="selected != '' && checked == false && charted == true">
+      Chart!
+      <trend
+        :data="[0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]"
+        :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
+        auto-draw
+        smooth>
+      </trend>
+    </div>
+
+<!-- SHOW AS A CHART FOR EMISSIONS-->
+    <div v-if="selected != '' && checked == false && charted == true">
+        Chart!
+        <trend
+          :data="[0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]"
+          :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
+          auto-draw
+          smooth>
+        </trend>
+      </div>
+</div>
 </template>
 
 <script>
@@ -60,21 +85,24 @@ export default {
       checked: '',
     }
   },
-  computed: mapState([
-    'msg',
-    'countries',
-    'selected',
-    'checked',
-  ]),
+  // computed: mapState([
+  //   'msg',
+  //   'countries',
+  //   'selected',
+  //   'checked',
+  // ]),
   watch: {
     selected: function (selected) {
+      this.getMessage()
+    },
+    charted: function (charted) {
       this.getMessage()
     }
   },
   methods: {
-    selectInput(selected) {
-      this.countryinput = selected
-    },
+    // selectInput(selected) {
+    //   this.countryinput = selected
+    // },
     getMessage(selected) {
       const path = 'http://localhost:5000/api/countries/' + this.selected;
       axios.get(path)
