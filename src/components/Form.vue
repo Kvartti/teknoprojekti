@@ -9,18 +9,20 @@
     <option v-for="country in countries.countries">{{ country }}</option>
     </select>
     <br/>
-    <input type="checkbox" id="checkbox" v-model="checked">
-    <label for="checkbox">Emissions per capita</label>
+    <div><input type="checkbox" id="checkbox" v-model="checked">
+    <label for="checkbox">Emissions per capita</label></div>
+    <div><input type="checkbox" id="charted" v-model="charted">
+    <label for="charted">Show as a chart</label></div>
     <!-- <span>Selected: {{ selected }}</span>
     <p>{{msg.countryinput}}</p> -->
 
 <!-- TABLE FOR EMISSIONS-->
-    <div v-if="selected != '' && checked == false">
+    <div v-if="selected != '' && checked == false && charted == false">
       <h2>{{ this.selected }}</h2>
         <table class="tablestyle" align="center">
         <tr>
           <th>Year</th>
-          <th>{{ msg.headers[2] }}</th>
+          <!-- <th>{{ msg.headers[2] }}</th> -->
         </tr>
         <tr v-for="(emission, index) in msg.emissions">
         <td>{{ msg.years[index] }}</td>
@@ -30,12 +32,12 @@
     </div>
 
 <!-- TABLE FOR EMISSIONS PER CAPITA-->
-    <div v-if="selected != '' && checked == true">
+    <div v-if="selected != '' && checked == true && charted == false">
       <h2>{{ this.selected }}</h2>
         <table class="tablestyle" align="center">
         <tr>
           <th>Year</th>
-          <th>{{ msg.headers[2] }}</th>
+          <!-- <th>{{ msg.headers[2] }}</th> -->
         </tr>
         <tr v-for="(percapita, index) in msg.percapitas">
         <td>{{ msg.years[index] }}</td>
@@ -43,9 +45,31 @@
         </tr>
         </table>
     </div>
+
+<!-- SHOW AS A CHART FOR EMISSIONS-->
+    <div v-if="selected != '' && checked == false && charted == true">
+      Chart!
+      <trend
+        :data="[0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]"
+        :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
+        smooth>
+      </trend>
+    </div>
+
+<!-- SHOW AS A CHART FOR EMISSIONS-->
+    <div v-if="selected != '' && checked == true && charted == true">
+      Chart 2!<br/>
+      {{msg.percapitas}}
+      <trend
+        :data="charttwo"
+        :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
+        auto-draw
+        smooth>
+      </trend>
+    </div>
   </div>
 </template>
-
+'
 <script>
 import { mapState } from 'vuex'
 import axios from 'axios';
@@ -58,14 +82,17 @@ export default {
       msg: '',
       selected: '',
       checked: '',
+      charted: '',
+      charttwo: [],
     }
   },
-  computed: mapState([
-    'msg',
-    'countries',
-    'selected',
-    'checked',
-  ]),
+  // computed: mapState([
+  //   'msg',
+  //   'countries',
+  //   'selected',
+  //   'checked',
+  //   'charted',
+  // ]),
   watch: {
     selected: function (selected) {
       this.getMessage()
@@ -80,6 +107,7 @@ export default {
       axios.get(path)
         .then((res) => {
           this.msg = res.data;
+          this.charttwo = this.msg.percapitas;
         })
         .catch((error) => {
           console.error(error);
