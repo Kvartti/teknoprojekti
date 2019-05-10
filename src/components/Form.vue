@@ -22,7 +22,8 @@
         <table class="tablestyle" align="center">
         <tr>
           <th>Year</th>
-          <!-- <th>{{ msg.headers[2] }}</th> -->
+          <th>CO2 Emissions</th>
+          <!-- {{ msg.headers[2] }} -->
         </tr>
         <tr v-for="(emission, index) in msg.emissions">
         <td>{{ msg.years[index] }}</td>
@@ -37,7 +38,7 @@
         <table class="tablestyle" align="center">
         <tr>
           <th>Year</th>
-          <!-- <th>{{ msg.headers[2] }}</th> -->
+          <th>CO2 Emissions</th>
         </tr>
         <tr v-for="(percapita, index) in msg.percapitas">
         <td>{{ msg.years[index] }}</td>
@@ -59,23 +60,43 @@
 <!-- SHOW AS A CHART FOR EMISSIONS-->
     <div v-if="selected != '' && checked == true && charted == true">
       Chart 2!<br/>
-      {{msg.percapitas}}
-      <trend
+      <!-- {{msg.percapitas}} -->
+      <!-- <trend
         :data="charttwo"
         :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
         auto-draw
         smooth>
       </trend>
+
+      <GChart
+        type="LineChart"
+        :data="chartData"
+      />
+      Hmmm -->
+      <div>
+        <apexchart width="70%" type="line" :options="percapitaoptions" :series="percapitachart"></apexchart>
+      </div>
+      Hmm2
+      <!-- {{this.chartemissionspercapita}} -->
+      <!-- {{this.percapitaoptions.xaxis}} -->
+      <!-- {{this.msg.years}} -->
     </div>
-  </div>
+    </div>
 </template>
 '
 <script>
-import { mapState } from 'vuex'
+//import { mapState } from 'vuex';
 import axios from 'axios';
+import { GChart } from 'vue-google-charts';
+import VueApexCharts from 'vue-apexcharts'
+
+// Vue.component('apexchart', VueApexCharts);
 
 export default {
   name: 'Form',
+  components: {
+    GChart
+  },
   data () {
     return {
       countries: '',
@@ -84,6 +105,26 @@ export default {
       checked: '',
       charted: '',
       charttwo: [],
+
+      percapitaoptions: {
+        chart: {
+          id: 'emissions per capita chart'
+        },
+        xaxis: {
+          categories: []
+        },
+      },
+      // percapitachart: [{
+      //   name: '',
+      //   data: []
+      // }],
+
+      // chartData: [
+      //   ['Year', 'Emissions'],
+      //   ['2014', 0.0002],
+      //   ['2015', 0.0002],
+      //   ['2016', 0.0005],
+      // ],
     }
   },
   // computed: mapState([
@@ -98,16 +139,34 @@ export default {
       this.getMessage()
     }
   },
+  computed: {
+    chartData () {
+      return [this.percapitas]
+    }
+  },
   methods: {
     selectInput(selected) {
       this.countryinput = selected
     },
-    getMessage(selected) {
+    getMessage(selected,) {
       const path = 'http://localhost:5000/api/countries/' + this.selected;
       axios.get(path)
         .then((res) => {
           this.msg = res.data;
           this.charttwo = this.msg.percapitas;
+
+          this.percapitachart = [{
+            name: 'Emissions',
+            data: this.msg.percapitas
+          }],
+          this.percapitaoptions = {
+          xaxis: {
+              categories: this.msg.years,
+              labels: {
+                show: false
+              }
+              }
+          }
         })
         .catch((error) => {
           console.error(error);
