@@ -2,9 +2,6 @@
   <div>
     <h1>CO2 Emissions</h1>
     <p>Which country's emissions would you like to see?</p>
-    <p>
-      vituttaa
-    </p>
     <select v-model="selected">
     <option v-for="country in countries.countries">{{ country }}</option>
     </select>
@@ -13,8 +10,6 @@
     <label for="checkbox">Emissions per capita</label></div>
     <div><input type="checkbox" id="charted" v-model="charted">
     <label for="charted">Show as a chart</label></div>
-    <!-- <span>Selected: {{ selected }}</span>
-    <p>{{msg.countryinput}}</p> -->
 
 <!-- TABLE FOR EMISSIONS-->
     <div v-if="selected != '' && checked == false && charted == false">
@@ -23,10 +18,9 @@
         <tr>
           <th>Year</th>
           <th>CO2 Emissions</th>
-          <!-- {{ msg.headers[2] }} -->
         </tr>
         <tr v-for="(emission, index) in msg.emissions">
-        <td>{{ msg.years[index] }}</td>
+          <td>{{ msg.years[index] }}</td>
           <td>{{ emission }}</td>
         </tr>
       </table>
@@ -47,56 +41,30 @@
         </table>
     </div>
 
-<!-- SHOW AS A CHART FOR EMISSIONS-->
+<!-- SHOW A CHART FOR EMISSIONS-->
     <div v-if="selected != '' && checked == false && charted == true">
-      Chart!
-      <trend
-        :data="[0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]"
-        :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
-        smooth>
-      </trend>
+      <h2>Emissions: {{ this.selected }}</h2>
+      <div style="margin-left: auto; margin-right: auto; width: 70%; text-align: center;">
+        <apexchart type="line" :options="emissionoptions" :series="emissionchart"></apexchart>
+      </div>
     </div>
 
-<!-- SHOW AS A CHART FOR EMISSIONS-->
+<!-- SHOW A CHART FOR EMISSIONS PER CAPITA-->
     <div v-if="selected != '' && checked == true && charted == true">
-      Chart 2!<br/>
-      <!-- {{msg.percapitas}} -->
-      <!-- <trend
-        :data="charttwo"
-        :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
-        auto-draw
-        smooth>
-      </trend>
-
-      <GChart
-        type="LineChart"
-        :data="chartData"
-      />
-      Hmmm -->
-      <div>
-        <apexchart width="70%" type="line" :options="percapitaoptions" :series="percapitachart"></apexchart>
+      <h2>Emissions per capita: {{ this.selected }}</h2>
+      <div style="margin-left: auto; margin-right: auto; width: 70%; text-align: center;">
+        <apexchart type="line" :options="percapitaoptions" :series="percapitachart"></apexchart>
       </div>
-      Hmm2
-      <!-- {{this.chartemissionspercapita}} -->
-      <!-- {{this.percapitaoptions.xaxis}} -->
-      <!-- {{this.msg.years}} -->
     </div>
     </div>
 </template>
 '
 <script>
-//import { mapState } from 'vuex';
 import axios from 'axios';
-import { GChart } from 'vue-google-charts';
 import VueApexCharts from 'vue-apexcharts'
-
-// Vue.component('apexchart', VueApexCharts);
 
 export default {
   name: 'Form',
-  components: {
-    GChart
-  },
   data () {
     return {
       countries: '',
@@ -114,26 +82,16 @@ export default {
           categories: []
         },
       },
-      // percapitachart: [{
-      //   name: '',
-      //   data: []
-      // }],
-
-      // chartData: [
-      //   ['Year', 'Emissions'],
-      //   ['2014', 0.0002],
-      //   ['2015', 0.0002],
-      //   ['2016', 0.0005],
-      // ],
+      emissionoptions: {
+        chart: {
+          id: 'emissions chart'
+        },
+        xaxis: {
+          categories: []
+        },
+      },
     }
   },
-  // computed: mapState([
-  //   'msg',
-  //   'countries',
-  //   'selected',
-  //   'checked',
-  //   'charted',
-  // ]),
   watch: {
     selected: function (selected) {
       this.getMessage()
@@ -155,17 +113,30 @@ export default {
           this.msg = res.data;
           this.charttwo = this.msg.percapitas;
 
+          this.emissionchart = [{
+            name: 'Emissions',
+            data: this.msg.emissions
+          }],
+          this.emissionoptions = {
+            xaxis: {
+              categories: this.msg.years,
+              labels: {
+                show: false
+              }
+            }
+          },
+
           this.percapitachart = [{
             name: 'Emissions',
             data: this.msg.percapitas
           }],
           this.percapitaoptions = {
-          xaxis: {
+            xaxis: {
               categories: this.msg.years,
               labels: {
                 show: false
               }
-              }
+            }
           }
         })
         .catch((error) => {
@@ -190,7 +161,6 @@ export default {
           this.countries = res.data;
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.error(error);
         });
     },
