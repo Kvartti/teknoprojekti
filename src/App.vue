@@ -1,14 +1,25 @@
 <template>
   <div id="app">
-    <router-view/>
+    <!-- <CO2/> -->
+    <Form />
+    <!-- <Table /> -->
   </div>
 </template>
 
 <script>
+//import CO2 from './components/CO2.vue';
+import Form from './components/Form.vue';
+//import Table from './components/Table.vue';
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    //CO2,
+    Form,
+    //Table,
+  },
 }
 </script>
+
 
 /* <style>
 #app {
