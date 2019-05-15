@@ -107,7 +107,7 @@ export default {
       this.countryinput = selected
     },
     getMessage(selected,) {
-      const path = 'http://localhost:5000/api/countries/' + this.selected;
+      const path = 'https://hidden-ocean-31469.herokuapp.com/api/countries/' + this.selected;
       axios.get(path)
         .then((res) => {
           this.msg = res.data;
@@ -144,7 +144,7 @@ export default {
         });
     },
     changeInput(payload) {
-      const path = 'http://localhost:5000/api/countries';
+      const path = 'https://hidden-ocean-31469.herokuapp.com/api/countries';
       axios.post(path, payload)
         .then(() => {
           this.getMessage();
@@ -155,7 +155,7 @@ export default {
         });
     },
     getCountries() {
-      const path = 'http://localhost:5000/api/countries';
+      const path = 'https://hidden-ocean-31469.herokuapp.com/api/countries';
       axios.get(path)
         .then((res) => {
           this.countries = res.data;
