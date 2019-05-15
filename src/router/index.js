@@ -28,7 +28,7 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
+      path: '/Emissions',
       name: 'Form',
       component: Form,
     },
