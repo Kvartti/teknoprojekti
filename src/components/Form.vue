@@ -1,4 +1,4 @@
-<template>
+getData<template>
   <div>
     <h1>CO2 Emissions</h1>
     <p>Which country's emissions would you like to see?</p>
@@ -58,7 +58,7 @@
     </div>
     </div>
 </template>
-'
+
 <script>
 import axios from 'axios';
 import VueApexCharts from 'vue-apexcharts';
@@ -72,7 +72,6 @@ export default {
       selected: '',
       checked: '',
       charted: '',
-      charttwo: [],
 
       percapitaoptions: {
         chart: {
@@ -93,26 +92,21 @@ export default {
     }
   },
   watch: {
+    //Update when checkbox selected
     selected: function (selected) {
-      this.getMessage()
-    }
-  },
-  computed: {
-    chartData () {
-      return [this.percapitas]
+      this.getData()
     }
   },
   methods: {
-    selectInput(selected) {
-      this.countryinput = selected
-    },
-    getMessage(selected,) {
+    //Get data from api
+    getData(selected) {
       const path = 'https://hidden-ocean-31469.herokuapp.com/api/countries/' + this.selected;
       axios.get(path)
         .then((res) => {
           this.msg = res.data;
           this.charttwo = this.msg.percapitas;
 
+          //Emissions chart data
           this.emissionchart = [{
             name: 'Emissions',
             data: this.msg.emissions
@@ -126,6 +120,7 @@ export default {
             }
           },
 
+          //Per capita chart data
           this.percapitachart = [{
             name: 'Emissions',
             data: this.msg.percapitas
@@ -143,17 +138,6 @@ export default {
           console.error(error);
         });
     },
-    changeInput(payload) {
-      const path = 'https://hidden-ocean-31469.herokuapp.com/api/countries';
-      axios.post(path, payload)
-        .then(() => {
-          this.getMessage();
-        })
-        .catch((error) => {
-          console.log(error);
-          this.getMessage();
-        });
-    },
     getCountries() {
       const path = 'https://hidden-ocean-31469.herokuapp.com/api/countries';
       axios.get(path)
@@ -166,9 +150,8 @@ export default {
     },
   },
   created() {
-    this.getMessage();
+    this.getData();
     this.getCountries();
-    this.selectInput();
   },
 };
 </script>
